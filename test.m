@@ -1,34 +1,33 @@
-%Read in images
-lp = imread('lp.png');
-noplate1 = imread('test3.png');
-noplate2 = imread('test4.png');
-%Choose testimage: test1/2/4/5/6/7 (3 and 4 have plates removed)
-testimage = imread('test2.png');
-[r c a] = size(testimage);
-
-%Reshape to RGB channels
-RGBlp = reshape(lp,[],3);
-RGBnoplate1 = reshape(noplate1,[],3);
-RGBnoplate2 = reshape(noplate2,[],3);
-RGBtestimage = reshape(testimage,[],3);
-
-%Scatter plot 1=R 2=G 3=B
-scatter(RGBlp(:,2),RGBlp(:,3),1,'yellow');
-hold on;
-scatter(RGBnoplate1(:,2),RGBnoplate1(:,3),1,'red');
-hold on;
-scatter(RGBnoplate2(:,2),RGBnoplate2(:,3),1,'blue');
+%Choose testimage: test1/2/6/7/8/9/10/11/12 (3 and 4 have plates removed)
+image = imread('test6.png');
+[r, c, a] = size(image);
+RGBimage = reshape(image,[],3);
 
 %Threshold to colour and size license plate
-thresh1 = RGBtestimage(:,2) > 100;
-thresh2 = RGBtestimage(:,3) < 70;
-threshim = reshape(thresh1 & thresh2,[],c);
-d = label(closing(threshim,10));
-data = measure(d,[],'size');
-n = [data.size] > 200;
-newimage = threshim & 0;
-plate = find(n);
-for i = 1:length(plate)
-    newimage = newimage | d == plate(i);
+threshim = thresholdimage(RGBimage,c);
+[located, obno] = findbiggest(threshim);
+
+min = measure(located,[],'Minimum');
+max = measure(located,[],'Maximum');
+xmin = zeros(1,obno);
+ymin = zeros(1,obno);
+xmax = zeros(1,obno);
+ymax = zeros(1,obno);
+for i = 1:obno
+    xmin(i) = min.minimum(2*i - 1);
+    ymin(i) = min.minimum(2*i);
+    xmax(i) = max.maximum(2*i -1);
+    ymax(i) = max.maximum(2*i);
+    cropped = imcrop(image,[xmin(i)-50 ymin(i)-50 xmax(i)-xmin(i)+100 ymax(i)-ymin(i)+100]);
+%     figure;
+%     imshow(cropped);
 end
-newimage
+
+RGBcropped = reshape(cropped,[],3);
+[r2,c2,a2] = size(cropped);
+threshcropped = logical(erosion(reshape(((RGBcropped(:,3) < RGBcropped(:,2) - 15) & (RGBcropped(:,2) > 85)),[],c2),3));
+imshow(threshcropped);
+straightplate = rotateplate(threshcropped);
+figure;
+imshow(straightplate);
+%license plate dimensions 52x11cm
