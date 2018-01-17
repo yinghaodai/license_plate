@@ -93,18 +93,15 @@ function processVideo_Callback(hObject, eventdata, handles)
 % hObject    handle to processVideo (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-startTime = now;
 completeData = cell(0, 3);
 for i = 1:handles.vid.NumberOfFrames
 	frame = read(handles.vid, i); % read the i-th frame
 	image(frame); % display image in axes
     dip_frame = joinchannels('rgb', dip_image(frame));
     licensePlate = processImage(dip_frame);
-    %licensePlate = string('XL-VB-52');
     if licensePlate ~= ''
         data = get(handles.outputTable, 'Data');
-        timestamp = 60 * str2double(datestr(now - startTime, 'MM')) + str2double(datestr(now - startTime, 'SS.FFF'));
-        newData = [{char(licensePlate)}, {i}, {timestamp}];
+        newData = [{char(licensePlate)}, {i}, {i/handles.vid.Framerate}];
         data = [data; newData];
         if size(data, 1) > 12
             data = data(end-11:end, :);
