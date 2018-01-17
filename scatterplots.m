@@ -1,6 +1,6 @@
 %Read in images
 lp = imread('lp.png');
-noplate1 = imread('test3.png');
+noplate1 = imread('test9noplate.png');
 noplate2 = imread('test4.png');
 
 %Reshape to RGB channels
