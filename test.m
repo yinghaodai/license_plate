@@ -1,5 +1,5 @@
 %Choose testimage: test1/2/6/7/8/9/10/11/12 (3 and 4 have plates removed)
-image = imread('testya18.png');
+image = imread('test11.png');
 figure;
 imshow(image);
 [r, c, ~] = size(image);
