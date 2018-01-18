@@ -98,7 +98,15 @@ for i = 1:handles.vid.NumberOfFrames
 	frame = read(handles.vid, i); % read the i-th frame
 	image(frame); % display image in axes
     %dip_frame = joinchannels('rgb', dip_image(frame));
-    licensePlate = processImage(frame);
+    
+    %%%%%%%%%%%%%%%%%%%%%%%
+    try
+        licensePlate = processImage(frame);
+    catch
+        licensePlate = '';
+    end;
+    %%%%%%%%%%%%%%%%%%%%%%%
+    
     if size(licensePlate, 2) > 0
         data = get(handles.outputTable, 'Data');
         newData = [{char(licensePlate)}, {i}, {i/handles.vid.Framerate}];
@@ -110,6 +118,7 @@ for i = 1:handles.vid.NumberOfFrames
         set(handles.outputTable, 'Data', data);
     end
 end
+disp(completeData);
 
 
 % --- Executes when user attempts to close figure1.
