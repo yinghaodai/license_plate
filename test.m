@@ -41,7 +41,6 @@ for i = 1:6
     xmax(i) = lettermax.Maximum(2*i - 1);
     ymax(i) = lettermax.Maximum(2*i);
 end
-sorted2 = sort(sorted2,'ascend');
 sorted3 = sort(sorted2,'ascend');
 plate = zeros(1, 6);
  for i = 1:6
