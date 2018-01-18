@@ -1,7 +1,8 @@
 %Choose testimage: test1/2/6/7/8/9/10/11/12 (3 and 4 have plates removed)
-image = imread('testya19.png');
-figure;
-imshow(image);
+%image = imread('test1.png');
+function plate = test(image)
+%figure;
+%imshow(image);
 [r, c, ~] = size(image);
 RGBimage = reshape(image,[],3);
 
@@ -25,8 +26,8 @@ for i=1:length(sorted)
         a = a | letters == i;
     end
 end
-figure;
-imshow(logical(letters));
+%figure;
+%imshow(logical(letters));
 xmin = zeros(1,6);
 xmax = zeros(1,6);
 ymin = zeros(1,6);
@@ -46,10 +47,12 @@ plate = zeros(1, 6);
  for i = 1:6
      index = find(sorted2 == sorted3(i));
      character = ~imcrop(logical(a),[xmin(index) ymin(index) xmax(index)-xmin(index) ymax(index)-ymin(index)]);
-     figure;
-     imshow(character);
+     %figure;
+     %imshow(character);
      plate(1, i) = recognize(character);
  end
  %disp(checkFormat(char(plate)));
- disp(char(plate));
+ %disp(char(plate));
+ plate = char(plate);
 %license plate dimensions 52x11cm
+end

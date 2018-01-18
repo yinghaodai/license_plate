@@ -97,9 +97,9 @@ completeData = cell(0, 3);
 for i = 1:handles.vid.NumberOfFrames
 	frame = read(handles.vid, i); % read the i-th frame
 	image(frame); % display image in axes
-    dip_frame = joinchannels('rgb', dip_image(frame));
-    licensePlate = processImage(dip_frame);
-    if licensePlate ~= ''
+    %dip_frame = joinchannels('rgb', dip_image(frame));
+    licensePlate = processImage(frame);
+    if size(licensePlate, 2) > 0
         data = get(handles.outputTable, 'Data');
         newData = [{char(licensePlate)}, {i}, {i/handles.vid.Framerate}];
         data = [data; newData];
