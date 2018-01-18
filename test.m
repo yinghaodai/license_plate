@@ -1,5 +1,5 @@
 %Choose testimage: test1/2/6/7/8/9/10/11/12 (3 and 4 have plates removed)
-image = imread('test8.png');
+image = imread('testya19.png');
 figure;
 imshow(image);
 [r, c, ~] = size(image);
@@ -41,9 +41,9 @@ for i = 1:6
     xmax(i) = lettermax.Maximum(2*i - 1);
     ymax(i) = lettermax.Maximum(2*i);
 end
-sorted2 = sort(sorted2,'ascend');
+sorted3 = sort(sorted2,'ascend');
  for i = 1:6
-     index = (find([lettermin.Minimum] == sorted2(i)) + 1)/2;
+     index = find(sorted2 == sorted3(i));
      character = ~imcrop(logical(a),[xmin(index) ymin(index) xmax(index)-xmin(index) ymax(index)-ymin(index)]);
      figure;
      imshow(character);
