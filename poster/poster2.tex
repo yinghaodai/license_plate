@@ -1,7 +1,7 @@
 \documentclass{tudelftposter}
 \usepackage{graphicx}
 \usepackage{subfigure}
-\title{TI2716-B License plate recognition, Poster 1}
+\title{TI2716-B License plate recognition, Poster 2}
 
 \addauthornote{tu}{Group 2, Delft University of Technology}
 
@@ -14,7 +14,7 @@
 \begin{document}
 \maketitle
 \section{Introduction}
-We are working on a license plate recognizer, which can, as the name already suggests, recognize license plates on cars under certain conditions. In the following, we will take you through the steps we have taken so far, and briefly state our plan for next week. 
+We are working on a license plate recogniser, which can, as the name already suggests, recognise license plates on cars under certain conditions. In the following, we will take you through the steps we have taken so far, and briefly state our plan for next week. 
 
 \section{Character recognition}
 Now that we can find a license plate in a given frame, our focus for this week is recognising the characters in the license plate. To do so, we take the following steps:
@@ -37,7 +37,7 @@ However, this method does not work ideally for all license plates. We ran into t
 \begin{itemize}
 \item The recognition function often mixed up 'S' with '5' and 'B' with '8'. We were able to solve this issue by giving more weight to the corners of the characters when one of these four was recognised.
 \item For some frames, the license plate recognition does not work well yet due to large variations in brightness and white balance. We will focus on standardising the frames to have the same brightness and white balance before thresholding next week.
-\item Some characters got split up into two objects during the thresholding process, which resulted in faulty recognition. For example, figure ... shows a license plate where the N is split into two parts, which are recognised as a '1' and 'V' respectively. This also has to do with standardisation and thresholding and will hopefully be resolved next week.
+\item Some characters got split up into two objects during the thresholding process, which resulted in faulty recognition. For example, figure \ref{brokenN} shows a license plate where the N is split into two parts, which are recognised as a '1' and 'V' respectively. This also has to do with standardisation and thresholding and will hopefully be resolved next week.
 \end{itemize}
 
 \begin{figure}[h]
@@ -48,10 +48,10 @@ However, this method does not work ideally for all license plates. We ran into t
 \end{figure}
 
 \section{Coupling to front end}
-In order to efficiently test how well our system works, we coupled the recognition program to our GUI. For now, this works quite slowly and occasionally gives errors when for example not enough characters are recognised in a frame. This can be sped up by making our code more efficient and processing only selected frames.
+In order to efficiently test how well our system works, we coupled the recognition program to our GUI. For now, this works quite slowly and occasionally gives errors when for example not enough characters are recognised in a frame, which causes our current score to be a meagre $0.14$. Moreover, our recogniser can be sped up by making our code more efficient and processing only selected frames.
 
 \section{Focus for next week}
-Next week, we aim to resolve the remaining problems with character recognition by improving the standardisation process, and also speed up the frame processing.
+Next week, we aim to resolve the remaining problems with character recognition by improving the standardisation process, and also speed up the frame processing. 
 
 \end{document}
 %\experimentalblockright{%
