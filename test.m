@@ -1,5 +1,5 @@
 %Choose testimage: test1/2/6/7/8/9/10/11/12 (3 and 4 have plates removed)
-image = imread('test11.png');
+image = imread('test8.png');
 figure;
 imshow(image);
 [r, c, ~] = size(image);
@@ -47,5 +47,6 @@ sorted2 = sort(sorted2,'ascend');
      character = ~imcrop(logical(a),[xmin(index) ymin(index) xmax(index)-xmin(index) ymax(index)-ymin(index)]);
      figure;
      imshow(character);
+     disp(recognize(character));
  end
 %license plate dimensions 52x11cm
