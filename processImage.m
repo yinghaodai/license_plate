@@ -1,4 +1,4 @@
 function licensePlate = processImage(image)
-    licensePlate = test(image);
+    licensePlate = test2(image);
 end
     

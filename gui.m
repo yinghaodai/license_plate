@@ -105,11 +105,11 @@ for i = 1:handles.vid.NumberOfFrames
         data = [data; newData];
         if size(data, 1) > 12
             data = data(end-11:end, :);
-        end;
+        end
         completeData = [completeData; newData];
         set(handles.outputTable, 'Data', data);
-    end;
-end;
+    end
+end
 
 
 % --- Executes when user attempts to close figure1.

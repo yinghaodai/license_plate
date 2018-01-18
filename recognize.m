@@ -16,5 +16,5 @@ sums(I) = Inf;
 name = char(characters(I));
 if n - m < 100
 %    check whether it should be the first or second (with weights)\
-end;
+end
 recognized = name(end-4);
