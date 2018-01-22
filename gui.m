@@ -54,6 +54,8 @@ function gui_OpeningFcn(hObject, eventdata, handles, varargin)
 
 data = cell(0, 3);
 set(handles.outputTable, 'Data', data);
+handles.completeData = cell(5000, 3);
+handles.counter = 0;
 
 % Choose default command line output for gui
 handles.output = hObject;
@@ -93,12 +95,12 @@ function processVideo_Callback(hObject, eventdata, handles)
 % hObject    handle to processVideo (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-completeData = cell(0, 3);
 for i = 1:handles.vid.NumberOfFrames
+    tic
 	frame = read(handles.vid, i); % read the i-th frame
 	image(frame); % display image in axes
     %dip_frame = joinchannels('rgb', dip_image(frame));
-    
+    toc
     %%%%%%%%%%%%%%%%%%%%%%%
     try
         licensePlate = processImage(frame);
@@ -106,7 +108,7 @@ for i = 1:handles.vid.NumberOfFrames
         licensePlate = '';
     end;
     %%%%%%%%%%%%%%%%%%%%%%%
-    
+    toc
     if size(licensePlate, 2) > 0
         data = get(handles.outputTable, 'Data');
         newData = [{char(licensePlate)}, {i}, {i/handles.vid.Framerate}];
@@ -114,11 +116,15 @@ for i = 1:handles.vid.NumberOfFrames
         if size(data, 1) > 12
             data = data(end-11:end, :);
         end
-        completeData = [completeData; newData];
+        handles.counter = handles.counter + 1;
+        handles.completeData(handles.counter, :) = newData;
         set(handles.outputTable, 'Data', data);
+        guidata(hObject, handles);
     end
+    toc
 end
-disp(completeData);
+handles.completeData = handles.completeData(1:handles.counter, :);
+checkSolution(handles.completeData, 'trainingsolutions.mat');
 
 
 % --- Executes when user attempts to close figure1.
@@ -127,4 +133,6 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % Hint: delete(hObject) closes the figure
+handles.completeData = handles.completeData(1:handles.counter, :);
+checkSolution(handles.completeData, 'trainingsolutions.mat');
 delete(hObject);
