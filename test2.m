@@ -3,12 +3,12 @@ function plate = test2(image)
 
 %Threshold to colour license plate, crop out located and straightened license plate
 threshim = thresholdimage2(image);
-if sum(sum(threshim)) < 300 %no plate detected at all
+if sum(sum(threshim)) < 100 %no plate detected at all
     plate = '';
 else
     cropped = crop(threshim,image,50);
     threshcropped = logical(erosion(((cropped(:,:,3) < cropped(:,:,2) - 15) & (cropped(:,:,2) > 85)),3));
-    if sum(sum(threshcropped)) < 300 %object detected too small
+    if sum(sum(threshcropped)) < 100 %object detected too small
         plate = '';
     else
         straightplate = rotateplate2(threshcropped);
@@ -16,7 +16,7 @@ else
         
         %Find and recognise characters in license plate
         labeled = label(brmedgeobjs(~closing(croppedplate,5),1));
-        if sum(sum(logical(labeled))) < 300 %characters detected too small
+        if sum(sum(logical(labeled))) < 100 %characters detected too small
             plate = '';
         else
             sizes = measure(labeled,[],'size');
