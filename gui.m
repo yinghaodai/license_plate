@@ -99,8 +99,7 @@ for i = 1:handles.vid.NumberOfFrames
     tic
 	frame = read(handles.vid, i); % read the i-th frame
 	image(frame); % display image in axes
-    %dip_frame = joinchannels('rgb', dip_image(frame));
-    toc
+    
     %%%%%%%%%%%%%%%%%%%%%%%
     try
         licensePlate = processImage(frame);
@@ -108,7 +107,7 @@ for i = 1:handles.vid.NumberOfFrames
         licensePlate = '';
     end;
     %%%%%%%%%%%%%%%%%%%%%%%
-    toc
+    
     if size(licensePlate, 2) > 0
         data = get(handles.outputTable, 'Data');
         newData = [{char(licensePlate)}, {i}, {i/handles.vid.Framerate}];
@@ -121,7 +120,6 @@ for i = 1:handles.vid.NumberOfFrames
         set(handles.outputTable, 'Data', data);
         guidata(hObject, handles);
     end
-    toc
 end
 handles.completeData = handles.completeData(1:handles.counter, :);
 checkSolution(handles.completeData, 'trainingsolutions.mat');

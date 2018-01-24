@@ -18,10 +18,6 @@ function newPlate = checkFormat(plate)
     end;
 end
 
-function bool = isPlateLetter(char)
-    bool = ismember(char, 'BDFGHJKLMNPRSTVWXZ');
-end
-
 function newPlate = addBars(plate, index)
     matrix = [2 4; 2 4; 2 4; 2 5; 1 4; 2 5; 1 4];
     n = matrix(index, 1);
