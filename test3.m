@@ -59,7 +59,7 @@ while plateread == true
     j = 1;
     for i = 1:6
         index = find(xmin == startpoints(i));
-        if (i > 1) && (xmin (index) - xmax(previndex) > 10)
+        if (i > 1) && (xmin (index) - xmax(previndex) > 0.05*length(croppedplate(1,:)))
             plate(j) = '-';
             j = j+1;
         end
