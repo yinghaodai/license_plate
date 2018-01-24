@@ -1,40 +1,5 @@
 function licensePlate = processImage(image)
     plate = test3(image);
-%     newPlate = plate;
-%     newPlate(plate == 'B') = '8';
-%     if size(checkFormat(plate), 2) == 0 && size(checkFormat(newPlate), 2) > 0
-%         plate = newPlate;
-%     else
-%         newPlate = plate;
-%     end;
-%     newPlate(plate == '8') = 'B';
-%     if size(checkFormat(plate), 2) == 0 && size(checkFormat(newPlate), 2) > 0
-%         plate = newPlate;
-%     else
-%         newPlate = plate;
-%     end;
-%     newPlate(plate == 'S') = '5';
-%     if size(checkFormat(plate), 2) == 0 && size(checkFormat(newPlate), 2) > 0
-%         plate = newPlate;
-%     else
-%         newPlate = plate;
-%     end;
-%     newPlate(plate == '5') = 'S';
-%     if size(checkFormat(plate), 2) == 0 && size(checkFormat(newPlate), 2) > 0
-%         plate(plate == '5') = 'S';
-%     else
-%         newPlate = plate;
-%     end;
-%     newPlate(plate == 'Z') = '2';
-%     if size(checkFormat(plate), 2) == 0 && size(checkFormat(newPlate), 2) > 0
-%         plate = newPlate;
-%     else
-%         newPlate = plate;
-%     end;
-%     newPlate(plate == '2') = 'Z';
-%     if size(checkFormat(plate), 2) == 0 && size(checkFormat(newPlate), 2) > 0
-%         plate = newPlate;
-%     end;
     licensePlate = '';
     groups = strsplit(plate, '-');
     lonelyGroup = 0;
@@ -69,6 +34,18 @@ function licensePlate = processImage(image)
                 else
                     group = groups{i};
                 end
+                group(group == 'D') = '0';
+                if ~all(group == groups{i}) && all(isstrprop(group, 'digit'))
+                    groups{i} = group;
+                else
+                    group = groups{i};
+                end
+                group(group == '0') = 'D';
+                if ~all(group == groups{i}) && all(isPlateLetter(group))
+                    groups{i} = group;
+                else
+                    group = groups{i};
+                end
                 group(group == 'Z') = '2';
                 if ~all(group == groups{i}) && all(isstrprop(group, 'digit'))
                     groups{i} = group;
@@ -97,6 +74,10 @@ function licensePlate = processImage(image)
                     groups{lonelyGroup} = '2';
                 case '2'
                     groups{lonelyGroup} = 'Z';
+                case 'D'
+                    groups{lonelyGroup} = '0';
+                case '0'
+                    groups{lonelyGroup} = 'D';
             end
             licensePlate = checkFormat2(strjoin(groups, '-'));
         end
