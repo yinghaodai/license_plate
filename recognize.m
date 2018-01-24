@@ -11,7 +11,7 @@ for i = 1:26
 end
 recognized = '';
 [m,I] = min(sums);
-if sums(I) < 1650
+%if sums(I) < 1700
     recognized = names(I);
     sums(I) = Inf;
     [n, J] = min(sums);
@@ -24,7 +24,7 @@ if sums(I) < 1650
             recognized = names(J);
         end
     end
-end
+%end
 % %a = a(:,:,1);
 % a = imresize(a, [100 50]);
 % characters = {'Letters2/B.png' 'Letters2/D.png' 'Letters2/F.png' 'Letters2/G.png' 'Letters2/H.png' 'Letters2/J.png' 'Letters2/K.png' 'Letters2/L.png' 'Letters2/N.png' 'Letters2/P.png' 'Letters2/R.png' 'Letters2/S.png' 'Letters2/T.png' 'Letters2/V.png' 'Letters2/X.png' 'Letters2/Z.png' 'Letters2/0.png' 'Letters2/1.png' 'Letters2/2.png' 'Letters2/3.png' 'Letters2/4.png' 'Letters2/5.png' 'Letters2/6.png' 'Letters2/7.png' 'Letters2/8.png' 'Letters2/9.png'};

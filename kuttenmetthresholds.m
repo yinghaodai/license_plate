@@ -1,5 +1,5 @@
-vid = VideoReader('Video230.avi');
-frame = read(vid, 510);
+vid = VideoReader('TrainingVideo.avi');
+frame = read(vid, 290);
 %imwrite(frame,'frametest.png');
 plate = '';
 plateread = true;
@@ -17,9 +17,11 @@ while plateread == true
         plateread = false;
         break
     end
-    cropped = crop(threshim,image,50);
-    hsvcropped = rgb2hsv(cropped);
-    threshcropped = logical((cropped(:,:,3) < cropped(:,:,2)-20) & (cropped(:,:,2) > 80) & (hsvcropped(:,:,2) > 0.5));
+    cropped = crop(threshim,image,10);
+    %hsvcropped = rgb2hsv(cropped);
+    low_high = stretchlim(cropped);
+    cropped = imadjust(cropped,low_high);
+    threshcropped = logical((cropped(:,:,3) < cropped(:,:,2)-50) & (cropped(:,:,2) > 120) & (cropped(:,:,1) > 160));
     figure;
     imshow(threshcropped);
     if sum(sum(threshcropped)) < 1000 %object detected too small
