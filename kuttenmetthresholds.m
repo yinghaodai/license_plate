@@ -1,5 +1,5 @@
 vid = VideoReader('TrainingVideo.avi');
-frame = read(vid, 290);
+frame = read(vid, 500);
 %imwrite(frame,'frametest.png');
 plate = '';
 plateread = true;
@@ -20,7 +20,7 @@ while plateread == true
     cropped = crop(threshim,image,10);
     %hsvcropped = rgb2hsv(cropped);
     low_high = stretchlim(cropped);
-    cropped = imadjust(cropped,low_high);
+    cropped = imadjust(cropped,[0.1 0.1 0.1; 0.7 0.7 0.7]);
     threshcropped = logical((cropped(:,:,3) < cropped(:,:,2)-50) & (cropped(:,:,2) > 120) & (cropped(:,:,1) > 160));
     figure;
     imshow(threshcropped);
@@ -29,17 +29,17 @@ while plateread == true
         break
     end
     straightplate = rotateplate2(threshcropped);
-    croppedplate = crop(straightplate,straightplate,0);
+    croppedplate = crop(straightplate,straightplate,-5);
     ratio = length(croppedplate(1,:))/length(croppedplate(:,1));
     volume = length(croppedplate(1,:))*length(croppedplate(:,1));
-    if (ratio < 3.75) || (ratio > 5.3) %check license plate proportions
+    if (ratio < 3.75) || (ratio > 6.1) %check license plate proportions
         plateread = false;
         break
     end
     figure;
     imshow(croppedplate);
     %Find and recognise characters in license plate
-    labeled = label(brmedgeobjs(opening(~croppedplate,3),1));
+    labeled = label(opening(~croppedplate,3),1);
     figure;
     imshow(logical(labeled));
     if sum(sum(logical(labeled))) < 100 %characters detected too small
@@ -74,9 +74,11 @@ while plateread == true
     startpoints = sort(xmin,'ascend');
     plate = zeros(1, 8);
     j = 1;
+    %if volume > 30000
+        
     for i = 1:6
         index = find(xmin == startpoints(i));
-        if (i > 1) && (xmin (index) - xmax(previndex) > 10)
+        if (i > 1) && (xmin (index) - xmax(previndex) > 0.05*length(croppedplate(1,:)))
             plate(j) = '-';
             j = j+1;
         end

@@ -9,23 +9,22 @@ while plateread == true
         break
     end
     cropped = crop(threshim,image,10);
-    low_high = stretchlim(cropped);
-    cropped = imadjust(cropped,low_high);
+    cropped = imadjust(cropped,[0.1 0.1 0.1; 0.7 0.7 0.7]);
     threshcropped = logical((cropped(:,:,3) < cropped(:,:,2)-50) & (cropped(:,:,2) > 120) & (cropped(:,:,1) > 160));
     if sum(sum(threshcropped)) < 100 %object detected too small
         plateread = false;
         break
     end
     straightplate = rotateplate2(threshcropped);
-    croppedplate = crop(straightplate,straightplate,0);
+    croppedplate = crop(straightplate,straightplate,-5);
     ratio = length(croppedplate(1,:))/length(croppedplate(:,1));
     volume = length(croppedplate(1,:))*length(croppedplate(:,1));
-    if (ratio < 3.75) || (ratio > 5.3) %check license plate proportions
+    if (ratio < 3.75) || (ratio > 6.1) %check license plate proportions
         plateread = false;
         break
     end
     %Find and recognise characters in license plate
-    labeled = label(brmedgeobjs(opening(~croppedplate,3),1));
+    labeled = label(opening(~croppedplate,3),1);
     if sum(sum(logical(labeled))) < 200 %characters detected too small
         plateread = false;
         break
