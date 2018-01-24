@@ -1,28 +1,30 @@
-function plate = test3(image)
+vid = VideoReader('TrainingVideo.avi');
+frame = read(vid, 30);
+%imwrite(frame,'frametest.png');
 plate = '';
 plateread = true;
 while plateread == true
+    image = frame;
+    %image = imadjust(image,[0.1 0.1 0.1; 0.8 0.8 0.8],[]);
+    figure;
+    imshow(image);
     %Threshold to colour license plate, crop out located and straightened license plate
     threshim = thresholdimage3(image);
-    if sum(sum(threshim)) < 100 %no plate detected at all
+    %threshim = (image(:,:,3) < image(:,:,2) - 15) & (image(:,:,2) > 85);
+    figure;
+    imshow(threshim);
+    if sum(sum(threshim)) < 1000 %no plate detected at all
         plateread = false;
         break
     end
     cropped = crop(threshim,image,10);
-    uplim = 0.5;
-    avg = mean(mean(mean(cropped)));
-    if  avg> 110
-        uplim = 0.75;
-    elseif avg > 95
-        uplim = 0.7;
-    elseif avg > 85
-        uplim = 0.65;
-    elseif avg > 75
-        uplim = 0.6;
-    end
-    cropped = imadjust(cropped,[0.05 0.05 0.05; uplim uplim uplim]);
-    threshcropped = logical((cropped(:,:,3) < cropped(:,:,2)-45) & (cropped(:,:,2) > 145) & (cropped(:,:,1) > 165));
-    if sum(sum(threshcropped)) < 100 %object detected too small
+    %hsvcropped = rgb2hsv(cropped);
+    low_high = stretchlim(cropped);
+    cropped = imadjust(cropped,[0.05 0.05 0.05; 0.6 0.6 0.6]);
+    threshcropped = logical((cropped(:,:,3) < cropped(:,:,2)-40) & (cropped(:,:,2) > 130) & (cropped(:,:,1) > 10));
+    figure;
+    imshow(threshcropped);
+    if sum(sum(threshcropped)) < 1000 %object detected too small
         plateread = false;
         break
     end
@@ -34,9 +36,13 @@ while plateread == true
         plateread = false;
         break
     end
+    figure;
+    imshow(croppedplate);
     %Find and recognise characters in license plate
     labeled = label(opening(~croppedplate,3),1);
-    if sum(sum(logical(labeled))) < 200 %characters detected too small
+    figure;
+    imshow(logical(labeled));
+    if sum(sum(logical(labeled))) < 100 %characters detected too small
         plateread = false;
         break
     end
@@ -68,6 +74,8 @@ while plateread == true
     startpoints = sort(xmin,'ascend');
     plate = zeros(1, 8);
     j = 1;
+    %if volume > 30000
+        
     for i = 1:6
         index = find(xmin == startpoints(i));
         if (i > 1) && (xmin (index) - xmax(previndex) > 0.05*length(croppedplate(1,:)))
@@ -82,3 +90,4 @@ while plateread == true
     plate = char(plate);
     plateread = false;
 end
+disp(plate);

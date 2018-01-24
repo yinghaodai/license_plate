@@ -1,5 +1,5 @@
 vid = VideoReader('TrainingVideo.avi');
-frame = read(vid, 500);
+frame = read(vid, 790);
 %imwrite(frame,'frametest.png');
 plate = '';
 plateread = true;
@@ -18,10 +18,19 @@ while plateread == true
         break
     end
     cropped = crop(threshim,image,10);
-    %hsvcropped = rgb2hsv(cropped);
-    low_high = stretchlim(cropped);
-    cropped = imadjust(cropped,[0.1 0.1 0.1; 0.7 0.7 0.7]);
-    threshcropped = logical((cropped(:,:,3) < cropped(:,:,2)-50) & (cropped(:,:,2) > 120) & (cropped(:,:,1) > 160));
+    uplim = 0.5;
+    avg = mean(mean(mean(cropped)));
+    if  avg> 110
+        uplim = 0.75;
+    elseif avg > 95
+        uplim = 0.7;
+    elseif avg > 85
+        uplim = 0.65;
+    elseif avg > 75
+        uplim = 0.6;
+    end
+    cropped = imadjust(cropped,[0.05 0.05 0.05; uplim uplim uplim]);
+    threshcropped = logical((cropped(:,:,3) < cropped(:,:,2)-45) & (cropped(:,:,2) > 145) & (cropped(:,:,1) > 165));
     figure;
     imshow(threshcropped);
     if sum(sum(threshcropped)) < 1000 %object detected too small
@@ -29,10 +38,10 @@ while plateread == true
         break
     end
     straightplate = rotateplate2(threshcropped);
-    croppedplate = crop(straightplate,straightplate,-5);
+    croppedplate = crop(straightplate,straightplate,-0.015*length(straightplate(1,:)));
     ratio = length(croppedplate(1,:))/length(croppedplate(:,1));
     volume = length(croppedplate(1,:))*length(croppedplate(:,1));
-    if (ratio < 3.75) || (ratio > 6.1) %check license plate proportions
+    if (ratio < 3.75) %check license plate proportions
         plateread = false;
         break
     end
