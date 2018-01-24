@@ -1,5 +1,5 @@
 vid = VideoReader('Video230.avi');
-frame = read(vid, 670);
+frame = read(vid, 510);
 %imwrite(frame,'frametest.png');
 plate = '';
 plateread = true;
@@ -13,7 +13,7 @@ while plateread == true
     %threshim = (image(:,:,3) < image(:,:,2) - 15) & (image(:,:,2) > 85);
     figure;
     imshow(threshim);
-    if sum(sum(threshim)) < 100 %no plate detected at all
+    if sum(sum(threshim)) < 1000 %no plate detected at all
         plateread = false;
         break
     end
@@ -22,7 +22,7 @@ while plateread == true
     threshcropped = logical((cropped(:,:,3) < cropped(:,:,2)-20) & (cropped(:,:,2) > 80) & (hsvcropped(:,:,2) > 0.5));
     figure;
     imshow(threshcropped);
-    if sum(sum(threshcropped)) < 100 %object detected too small
+    if sum(sum(threshcropped)) < 1000 %object detected too small
         plateread = false;
         break
     end
@@ -30,7 +30,7 @@ while plateread == true
     croppedplate = crop(straightplate,straightplate,0);
     ratio = length(croppedplate(1,:))/length(croppedplate(:,1));
     volume = length(croppedplate(1,:))*length(croppedplate(:,1));
-    if (ratio < 3.75) || (ratio > 5) %check license plate proportions
+    if (ratio < 3.75) || (ratio > 5.3) %check license plate proportions
         plateread = false;
         break
     end
@@ -70,11 +70,18 @@ while plateread == true
     end
     %sort characters by xmin, recognise
     startpoints = sort(xmin,'ascend');
-    plate = zeros(1, 6);
+    plate = zeros(1, 8);
+    j = 1;
     for i = 1:6
         index = find(xmin == startpoints(i));
+        if (i > 1) && (xmin (index) - xmax(previndex) > 10)
+            plate(j) = '-';
+            j = j+1;
+        end
         character = ~imcrop(logical(allchars),[xmin(index) ymin(index) xmax(index)-xmin(index) ymax(index)-ymin(index)]);
-        plate(1, i) = recognize(character);
+        plate(j) = recognize(character);
+        previndex = index;
+        j = j+1;
     end
     plate = char(plate);
     plateread = false;
