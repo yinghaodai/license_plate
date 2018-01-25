@@ -1,0 +1,9 @@
+function cropped = crop(image1,image2,space)
+b = greatest(image1);
+min = measure(b,[],'Minimum');
+max = measure(b,[],'Maximum');
+xmin = min.minimum(1);
+ymin = min.minimum(2);
+xmax = max.maximum(1);
+ymax = max.maximum(2);
+cropped = imcrop(image2,[xmin-space ymin-space xmax-xmin+2*space ymax-ymin+2*space]);
