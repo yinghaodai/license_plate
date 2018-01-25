@@ -10,7 +10,9 @@ while plateread == true
     image = crop(threshim,image,3);
     uplim = 0.45;
     avg = mean(mean(mean(image)));
-    if  avg> 110
+    if avg > 125
+        uplim = 0.85;
+    elseif  avg> 110
         uplim = 0.75;
     elseif avg > 95
         uplim = 0.68;
