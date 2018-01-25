@@ -1,63 +1,56 @@
 vid = VideoReader('TrainingVideo.avi');
-frame = read(vid, 790);
-%imwrite(frame,'frametest.png');
+frame = read(vid, 1475);
 plate = '';
 plateread = true;
 while plateread == true
     image = frame;
-    %image = imadjust(image,[0.1 0.1 0.1; 0.8 0.8 0.8],[]);
     figure;
     imshow(image);
     %Threshold to colour license plate, crop out located and straightened license plate
     threshim = thresholdimage3(image);
-    %threshim = (image(:,:,3) < image(:,:,2) - 15) & (image(:,:,2) > 85);
     figure;
     imshow(threshim);
     if sum(sum(threshim)) < 1000 %no plate detected at all
-        plateread = false;
         break
     end
-    cropped = crop(threshim,image,10);
-    uplim = 0.5;
-    avg = mean(mean(mean(cropped)));
+    image = crop(threshim,image,3);
+    uplim = 0.45;
+    avg = mean(mean(mean(image)));
     if  avg> 110
         uplim = 0.75;
     elseif avg > 95
-        uplim = 0.7;
+        uplim = 0.68;
     elseif avg > 85
-        uplim = 0.65;
+        uplim = 0.60;
     elseif avg > 75
-        uplim = 0.6;
+        uplim = 0.52;
     end
-    cropped = imadjust(cropped,[0.05 0.05 0.05; uplim uplim uplim]);
-    threshcropped = logical((cropped(:,:,3) < cropped(:,:,2)-45) & (cropped(:,:,2) > 145) & (cropped(:,:,1) > 165));
+    image = imadjust(image,[0.05 0.05 0.05; uplim uplim uplim]);
+    %image = imsharpen(image,'Amount',2);
+    thresholded = logical((image(:,:,3) < image(:,:,2)-45) & (image(:,:,2) > 145) & (image(:,:,1) > 165));
     figure;
-    imshow(threshcropped);
-    if sum(sum(threshcropped)) < 1000 %object detected too small
-        plateread = false;
+    imshow(thresholded);
+    if sum(sum(thresholded)) < 1000 %object detected too small
         break
     end
-    straightplate = rotateplate2(threshcropped);
-    croppedplate = crop(straightplate,straightplate,-0.015*length(straightplate(1,:)));
-    ratio = length(croppedplate(1,:))/length(croppedplate(:,1));
-    volume = length(croppedplate(1,:))*length(croppedplate(:,1));
+    cropped = rotateplate2(thresholded);
+    cropped = crop(cropped,cropped,-0.02*length(cropped(1,:)));
+    ratio = length(cropped(1,:))/length(cropped(:,1));
+    volume = length(cropped(1,:))*length(cropped(:,1));
     if (ratio < 3.75) %check license plate proportions
-        plateread = false;
         break
     end
     figure;
-    imshow(croppedplate);
+    imshow(cropped);
     %Find and recognise characters in license plate
-    labeled = label(opening(~croppedplate,3),1);
+    labeled = label(closing(~cropped,3));
     figure;
     imshow(logical(labeled));
     if sum(sum(logical(labeled))) < 100 %characters detected too small
-        plateread = false;
         break
     end
     sizes = measure(labeled,[],'size');
     if length([sizes.size]) < 6 %not enough characters detected
-        plateread = false;
         break
     end
     %Find biggest 6 characters on plate (remove hyphens etc)
@@ -87,11 +80,11 @@ while plateread == true
         
     for i = 1:6
         index = find(xmin == startpoints(i));
-        if (i > 1) && (xmin (index) - xmax(previndex) > 0.05*length(croppedplate(1,:)))
+        if (i > 1) && (xmin(index) - xmax(previndex) > 0.05*length(cropped(1,:)))
             plate(j) = '-';
             j = j+1;
         end
-        character = ~imcrop(logical(allchars),[xmin(index) ymin(index) xmax(index)-xmin(index) ymax(index)-ymin(index)]);
+        character = ~imcrop(logical(allchars),[xmin(index)+1 ymin(index)+1 xmax(index)-xmin(index) ymax(index)-ymin(index)]);
         plate(j) = recognize(character);
         previndex = index;
         j = j+1;
