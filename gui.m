@@ -127,7 +127,7 @@ for i = 1:handles.vid.NumberOfFrames
 %                 end
 %                 guidata(hObject, handles);
 %             end
-        elseif tempCount == 0 || (size(temp{tempCount, 1}, 2) == size(char(licensePlate), 2) && sum(temp{tempCount, 1} ~= char(licensePlate)) < 3)
+        elseif tempCount == 0 || (size(temp{tempCount, 1}, 2) == size(char(licensePlate), 2) && strdist(temp{tempCount, 1}, char(licensePlate)) < 3)
             tempCount = tempCount + 1;
             temp{tempCount, 1} = char(licensePlate);
             temp{tempCount, 2} = i;
