@@ -95,6 +95,9 @@ function processVideo_Callback(hObject, eventdata, handles)
 % hObject    handle to processVideo (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+tic
+temp = cell(10, 3);
+tempCount = 0;
 for i = 1:handles.vid.NumberOfFrames
 	frame = read(handles.vid, i); % read the i-th frame
 	image(frame); % display image in axes
@@ -108,17 +111,66 @@ for i = 1:handles.vid.NumberOfFrames
     %%%%%%%%%%%%%%%%%%%%%%%
     
     if size(licensePlate, 2) > 0
-        newData = [{char(licensePlate)}, {i}, {i/handles.vid.Framerate}];
-        handles.counter = handles.counter + 1;
-        handles.completeData(handles.counter, :) = newData;
-        if handles.counter > 12
-            set(handles.outputTable, 'Data', handles.completeData(handles.counter-11:handles.counter, :));
+%         newData = [{char(licensePlate)}, {i}, {i/handles.vid.Framerate}];
+        
+        if ismember(char(licensePlate), temp(1:tempCount, 1))
+            [~, index] = ismember(char(licensePlate), temp(1:tempCount, 1));
+            temp{index, 3} = temp{index, 3} + 1;
+%             if temp{index, 3} == 13
+%                 data = [temp(index, 1), temp(index, 2), {temp{index, 2}/handles.vid.Framerate}];
+%                 handles.counter = handles.counter + 1;
+%                 handles.completeData(handles.counter, :) = data;
+%                 if handles.counter > 12
+%                     set(handles.outputTable, 'Data', handles.completeData(handles.counter-11:handles.counter, :));
+%                 else
+%                     set(handles.outputTable, 'Data', handles.completeData(1:handles.counter, :));
+%                 end
+%                 guidata(hObject, handles);
+%             end
+        elseif tempCount == 0 || (size(temp{tempCount, 1}, 2) == size(char(licensePlate), 2) && sum(temp{tempCount, 1} ~= char(licensePlate)) < 3)
+            tempCount = tempCount + 1;
+            temp{tempCount, 1} = char(licensePlate);
+            temp{tempCount, 2} = i;
+            temp{tempCount, 3} = 1;
         else
-            set(handles.outputTable, 'Data', handles.completeData(1:handles.counter, :));
+            [~, index] = max([temp{1:tempCount, 3}]);
+            data = [temp(index, 1), temp(index, 2), {temp{index, 2}/handles.vid.Framerate}];
+            handles.counter = handles.counter + 1;
+            handles.completeData(handles.counter, :) = data;
+            if handles.counter > 12
+                set(handles.outputTable, 'Data', handles.completeData(handles.counter-11:handles.counter, :));
+            else
+                set(handles.outputTable, 'Data', handles.completeData(1:handles.counter, :));
+            end
+            guidata(hObject, handles);
+            tempCount = 1;
+            temp{tempCount, 1} = char(licensePlate);
+            temp{tempCount, 2} = i;
+            temp{tempCount, 3} = 1;
         end
-        %set(handles.outputTable, 'Data', shownData);
-        guidata(hObject, handles);
+        
+%         handles.counter = handles.counter + 1;
+%         handles.completeData(handles.counter, :) = newData;
+%         if handles.counter > 12
+%             set(handles.outputTable, 'Data', handles.completeData(handles.counter-11:handles.counter, :));
+%         else
+%             set(handles.outputTable, 'Data', handles.completeData(1:handles.counter, :));
+%         end
+%         guidata(hObject, handles);
     end
+end
+toc
+if tempCount > 0
+    [~, index] = max([temp{1:tempCount, 3}]);
+    data = [temp(index, 1), temp(index, 2), {temp{index, 2}/handles.vid.Framerate}];
+    handles.counter = handles.counter + 1;
+    handles.completeData(handles.counter, :) = data;
+    if handles.counter > 12
+        set(handles.outputTable, 'Data', handles.completeData(handles.counter-11:handles.counter, :));
+    else
+        set(handles.outputTable, 'Data', handles.completeData(1:handles.counter, :));
+    end
+    guidata(hObject, handles);
 end
 handles.completeData = handles.completeData(1:handles.counter, :);
 checkSolution(handles.completeData, 'trainingsolutions.mat');
