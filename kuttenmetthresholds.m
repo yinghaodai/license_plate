@@ -1,5 +1,5 @@
 vid = VideoReader('TrainingVideo.avi');
-frame = read(vid, 1475);
+frame = read(vid, 205);
 plate = '';
 plateread = true;
 while plateread == true
@@ -34,7 +34,7 @@ while plateread == true
         break
     end
     cropped = rotateplate2(thresholded);
-    cropped = crop(cropped,cropped,-0.02*length(cropped(1,:)));
+    cropped = crop(cropped,cropped,-0.023*length(cropped(1,:)));
     ratio = length(cropped(1,:))/length(cropped(:,1));
     volume = length(cropped(1,:))*length(cropped(:,1));
     if (ratio < 3.75) %check license plate proportions
@@ -43,7 +43,7 @@ while plateread == true
     figure;
     imshow(cropped);
     %Find and recognise characters in license plate
-    labeled = label(closing(~cropped,3));
+    labeled = label(~cropped);
     figure;
     imshow(logical(labeled));
     if sum(sum(logical(labeled))) < 100 %characters detected too small
