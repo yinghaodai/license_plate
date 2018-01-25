@@ -96,7 +96,6 @@ function processVideo_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 for i = 1:handles.vid.NumberOfFrames
-    tic
 	frame = read(handles.vid, i); % read the i-th frame
 	image(frame); % display image in axes
     
@@ -109,15 +108,15 @@ for i = 1:handles.vid.NumberOfFrames
     %%%%%%%%%%%%%%%%%%%%%%%
     
     if size(licensePlate, 2) > 0
-        data = get(handles.outputTable, 'Data');
         newData = [{char(licensePlate)}, {i}, {i/handles.vid.Framerate}];
-        data = [data; newData];
-        if size(data, 1) > 12
-            data = data(end-11:end, :);
-        end
         handles.counter = handles.counter + 1;
         handles.completeData(handles.counter, :) = newData;
-        set(handles.outputTable, 'Data', data);
+        if handles.counter > 12
+            set(handles.outputTable, 'Data', handles.completeData(handles.counter-11:handles.counter, :));
+        else
+            set(handles.outputTable, 'Data', handles.completeData(1:handles.counter, :));
+        end
+        %set(handles.outputTable, 'Data', shownData);
         guidata(hObject, handles);
     end
 end
