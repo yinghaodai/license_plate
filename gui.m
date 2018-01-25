@@ -51,7 +51,11 @@ function gui_OpeningFcn(hObject, eventdata, handles, varargin)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to gui (see VARARGIN)
-
+axes(handles.imageAxes)
+title = imread('Title.jpeg');
+image(title)
+axis off
+axis image
 data = cell(0, 3);
 set(handles.outputTable, 'Data', data);
 handles.completeData = cell(5000, 3);
