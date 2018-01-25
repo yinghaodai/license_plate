@@ -25,15 +25,15 @@ while plateread == true
         break
     end
     cropped = rotateplate2(thresholded);
-    cropped = crop(cropped,cropped,-0.023*length(cropped(1,:)));
+    cropped = crop(cropped,cropped,-0.02*length(cropped(1,:)));
     ratio = length(cropped(1,:))/length(cropped(:,1));
     %volume = length(cropped(1,:))*length(cropped(:,1));
     if (ratio < 3.75) %check license plate proportions
         break
     end
     %Find and recognise characters in license plate
-    labeled = label(~cropped);
-    if sum(sum(logical(labeled))) < 900 %characters detected too small
+    labeled = label(closing(~cropped,3));
+    if sum(sum(logical(labeled))) < 100 %characters detected too small
         break
     end
     sizes = measure(labeled,[],'size');
