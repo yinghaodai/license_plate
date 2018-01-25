@@ -103,7 +103,8 @@ tic
 temp = cell(10, 3);
 tempCount = 0;
 for i = 1:handles.vid.NumberOfFrames
-	frame = read(handles.vid, i); % read the i-th frame
+	if mod(i, 2) == 0 || mod(i, 10) == 7 % same as 2 mod 5 + even
+    frame = read(handles.vid, i); % read the i-th frame
 	image(frame); % display image in axes
     
     %%%%%%%%%%%%%%%%%%%%%%%
@@ -137,10 +138,17 @@ for i = 1:handles.vid.NumberOfFrames
             temp{tempCount, 2} = i;
             temp{tempCount, 3} = 1;
         else
-            [~, index] = max([temp{1:tempCount, 3}]);
+            [m, index] = max([temp{1:tempCount, 3}]);
+            temp{index, 3} = -Inf;
+            [n, index2] = max([temp{1:tempCount, 3}]);
             data = [temp(index, 1), temp(index, 2), {temp{index, 2}/handles.vid.Framerate}];
             handles.counter = handles.counter + 1;
             handles.completeData(handles.counter, :) = data;
+            if m - n < 0
+                data = [temp(index2, 1), temp(index2, 2), {temp{index2, 2}/handles.vid.Framerate}];
+                handles.counter = handles.counter + 1;
+                handles.completeData(handles.counter, :) = data;
+            end
             if handles.counter > 12
                 set(handles.outputTable, 'Data', handles.completeData(handles.counter-11:handles.counter, :));
             else
@@ -162,6 +170,7 @@ for i = 1:handles.vid.NumberOfFrames
 %         end
 %         guidata(hObject, handles);
     end
+end
 end
 toc
 if tempCount > 0
