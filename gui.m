@@ -103,7 +103,7 @@ tic
 temp = cell(10, 3);
 tempCount = 0;
 for i = 1:handles.vid.NumberOfFrames
-	if mod(i, 2) == 0 || mod(i, 10) == 7 % same as 2 mod 5 + even
+	if mod(i, 2) == 0 || mod(i, 10) == 7 || mod(i, 20) == 1 
     frame = read(handles.vid, i); % read the i-th frame
 	image(frame); % display image in axes
     
